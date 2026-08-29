@@ -327,7 +327,7 @@ The precise semantics of `StorageLive` and `StorageDead` are re-defined in a sec
 
 `StorageLive` no longer allocates the underlying memory for a local. Instead, any MIR statement or terminator which writes to a place that has no `Deref` projections[^2] will implicitly allocate the storage for that local[^3] before writing to it. This has no effect if the storage for that local is already allocated[^4].
 
-Writes to places that *do* have a `Deref` projection will still require that the base local be allocated, otherwise behavior is undefined.
+Writes to places that *do* have a `Deref` projection are *reading* the base local of the place expression. They will hence still require that local to be allocated, otherwise behavior is undefined.
 
 [^2]: This is similar, but not identical to the concept of [move paths](https://rustc-dev-guide.rust-lang.org/borrow_check/moves_and_initialization/move_paths.html) used by the borrow checker to track which parts of a local are currently initialized.
 [^3]: If the local was previously freed by `StorageDead` or a move, this new allocation may have a different address than the previous one.
