@@ -466,7 +466,7 @@ MIR optimizations need to account for the allocation effects of writes and whole
 
 The implementation of this RFC necessitated several adjustments to existing MIR transformations:
 - Inlining and `EnumSizeOpt` can take the address of an uninitialized local. These must insert `StorageAlloc` to ensure the local has an address before doing so.
-- `RemoveZsts` can no longer eliminate ZST assignments since those have the side effect of allocating the base local of the destination (which may not be a ZST!). Similarly, it can no longer eliminate `StorageLive`/`StorageDead` markers for ZST locals. The pass is still useful since it can replace ZST operands with constants, which can lead to DSE potentially eliminating these assignments later.
+- `RemoveZsts` can no longer eliminate ZST assignments since those have the side effect of allocating the base local of the destination (which may not be a ZST!). The pass is still useful since it can replace ZST operands with constants, which can lead to DSE potentially eliminating these assignments later.
 - Lowering of intrinsics with unit return type must still emit a write to initialize the return place.
 - Generated MIR, including shims and coroutine transformations, must explicitly initialize ZST results and locals that will be accessed.
 
