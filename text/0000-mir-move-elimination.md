@@ -369,13 +369,16 @@ State transitions are defined as follows:
 |---|---|---|
 | Function entry (arguments) | N/A | State starts as **allocated** |
 | Function entry (return place) | N/A | State starts as **live**[^ret] |
-| Function entry (other locals) | N/A | State starts as **dead** |
+| Function entry (other locals without storage markers) | N/A | State starts as **live**[^markers] |
+| Function entry (other locals with storage markers) | N/A | State starts as **dead**[^markers] |
 | `StorageLive` | None | State becomes **live**[^live] |
 | `StorageDead` | None | State becomes **dead** |
 | `StorageAlloc` | UB if **dead** | State becomes **allocated** |
 | Evaluation of a base local in destination place mode | UB if **dead** | State becomes **allocated** |
 | Evaluation of a base local in non-destination place mode | UB if not **allocated** | State stays **allocated** |
 | Evaluation of a move operand with no projections | UB if not **allocated** | State becomes **live**[^live2] |
+
+[^markers]: This follows the existing convention that locals without any `StorageLive`/`StorageDead` markers are implicitly live for the entire function. This allows MIR optimizations to safely strip storage statements from a local.
 
 The goal of these semantics is to ensure that the regions between `StorageLive` and `StorageDead` form an overapproximation of the actual time the variable is allocated and can hold data.
 
